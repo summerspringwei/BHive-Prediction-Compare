@@ -272,11 +272,14 @@ void runtest() {
 #endif
     asm __volatile__(
                      "isb\n\t"
-                     "mrs x0, pmevcntr0_el0\n\t"
+                    //  "mrs x0, pmevcntr0_el0\n\t"
+                    // refer to https://developer.arm.com/documentation/ddi0601/2020-12/AArch64-Registers/PMCCNTR-EL0--Performance-Monitors-Cycle-Count-Register
+                    // and https://developer.arm.com/documentation/102484/0001/AArch64-registers/AArch64-Performance-Monitors-registers-summary/PMEVCNTR0-EL0--Performance-Monitors-Event-Count-Registers
+                    //  "mrs x0, pmccntr_el0\n\t" // Change event count to cycle counter
+                     "mrs x0, cntvct_el0\n\t" // Change event count to cycle counter
                      "add %0, x0, #0\n\t"
                      : "=r"(count)
                      :);
-    
     unprotect_aux_stack();
     *(uint64_t *)(AUX_MEM_ADDR + CYC_COUNT_OFFSET) = count;
     *(uint64_t *)(AUX_MEM_ADDR + ITERATIONS_OFFSET) -= 1;
@@ -425,7 +428,8 @@ void runtest() {
               "isb \n\t"
               "isb \n\t"
               "isb \n\t"
-               "msr pmevcntr0_el0, x0\n\t" // clear
+              //  "msr pmevcntr0_el0, x0\n\t" // clear
+               "msr cntvct_el0, x0\n\t" // clear
                "add x0, x1, #0"
                :
                : );

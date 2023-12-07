@@ -374,7 +374,7 @@ int measure(char *code_to_test, unsigned long code_size,
     asm volatile("isb");
     asm volatile("mrs %0, pmcr_el0" : "=r"(tmp));
     asm volatile("msr pmcr_el0, %0" : : "r"(tmp | BIT(0)));
-
+    printf("[CHILD] Set event done.\n");
 #if 0
     /* Get perf encoding */
     pfm_initialize();
